@@ -30,13 +30,15 @@ import io.reactivex.processors.BehaviorProcessor;
  */
 public class BindLifecycleFlowableTransformer<T> implements FlowableTransformer<T, T> {
     private final BehaviorProcessor<Integer> lifecycleBehavior;
+    private int disposeEvent;
 
     private BindLifecycleFlowableTransformer() throws IllegalAccessException {
         throw new IllegalAccessException();
     }
 
-    public BindLifecycleFlowableTransformer(@NonNull BehaviorProcessor<Integer> lifecycleBehavior) {
+    public BindLifecycleFlowableTransformer(@NonNull BehaviorProcessor<Integer> lifecycleBehavior, int disposeLifecycle) {
         this.lifecycleBehavior = lifecycleBehavior;
+        this.disposeEvent = disposeLifecycle;
     }
 
     @Override
@@ -45,11 +47,10 @@ public class BindLifecycleFlowableTransformer<T> implements FlowableTransformer<
                 lifecycleBehavior.skipWhile(new Predicate<Integer>() {
                     @Override
                     public boolean test(@LifecyclePublisher.Event Integer event) throws Exception {
-                        return event != LifecyclePublisher.ON_DESTROY_VIEW &&
-                                event != LifecyclePublisher.ON_DESTROY &&
-                                event != LifecyclePublisher.ON_DETACH;
+                        return (event & disposeEvent) == 0;
                     }
                 })
         );
     }
+
 }

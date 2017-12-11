@@ -41,43 +41,61 @@ import io.reactivex.SingleTransformer;
 public class RxLifecycleCompact {
     private static final String FRAGMENT_TAG = "_BINDING_V4_FRAGMENT_";
     private final LifecyclePublisher lifecyclePublisher;
+    private int disposeEvent = LifecyclePublisher.ON_DESTROY_VIEW | LifecyclePublisher.ON_DESTROY | LifecyclePublisher.ON_DETACH;
+
 
     public static RxLifecycleCompact bind(@NonNull AppCompatActivity targetActivity) {
-        return bind(targetActivity.getSupportFragmentManager());
+        return bindUntil(targetActivity, -1);
+    }
+
+    public static RxLifecycleCompact bindUntil(@NonNull AppCompatActivity targetActivity, int disposeLifecycle) {
+        return bind(targetActivity.getSupportFragmentManager(), disposeLifecycle);
     }
 
     public static RxLifecycleCompact bind(@NonNull Fragment targetFragment) {
-        return bind(targetFragment.getChildFragmentManager());
+        return bindUntil(targetFragment, -1);
+    }
+
+    public static RxLifecycleCompact bindUntil(@NonNull Fragment targetFragment, int disposeLifecycle) {
+        return bind(targetFragment.getChildFragmentManager(), disposeLifecycle);
     }
 
     public static RxLifecycleCompact bind(@NonNull FragmentManager fragmentManager) {
+        return bindUntil(fragmentManager, -1);
+    }
+
+    public static RxLifecycleCompact bindUntil(@NonNull FragmentManager fragmentManager, int disposeLifecycle) {
+        return bind(fragmentManager, disposeLifecycle);
+    }
+
+    private static RxLifecycleCompact bind(@NonNull FragmentManager fragmentManager, int disposeLifecycle) {
         BindingV4Fragment fragment = (BindingV4Fragment) fragmentManager.findFragmentByTag(FRAGMENT_TAG);
         if (fragment == null) {
             fragment = new BindingV4Fragment();
-
             final FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.add(fragment, FRAGMENT_TAG);
             transaction.commit();
-
         } else if (fragment.isDetached()) {
             final FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.attach(fragment);
             transaction.commit();
         }
-
-        return bind(fragment.getLifecyclePublisher());
+        return bind(fragment.getLifecyclePublisher(), disposeLifecycle);
     }
 
-    public static RxLifecycleCompact bind(@NonNull LifecyclePublisher lifecyclePublisher) {
-        return new RxLifecycleCompact(lifecyclePublisher);
+    public static RxLifecycleCompact bind(@NonNull LifecyclePublisher lifecyclePublisher, int disposeEvent) {
+        return new RxLifecycleCompact(lifecyclePublisher, disposeEvent);
     }
 
     private RxLifecycleCompact() throws IllegalAccessException {
         throw new IllegalAccessException();
     }
 
-    private RxLifecycleCompact(@NonNull LifecyclePublisher lifecyclePublisher) {
+    private RxLifecycleCompact(@NonNull LifecyclePublisher lifecyclePublisher, int disposeLifecycle) {
         this.lifecyclePublisher = lifecyclePublisher;
+        if (disposeLifecycle > 0) {
+            this.disposeEvent = disposeLifecycle;
+        }
     }
 
     public Flowable<Integer> asFlowable() {
@@ -89,22 +107,22 @@ public class RxLifecycleCompact {
     }
 
     public <T> FlowableTransformer<T, T> withFlowable() {
-        return new BindLifecycleFlowableTransformer<T>(lifecyclePublisher.getBehavior());
+        return new BindLifecycleFlowableTransformer<T>(lifecyclePublisher.getBehavior(), disposeEvent);
     }
 
     public <T> ObservableTransformer<T, T> withObservable() {
-        return new BindLifecycleObservableTransformer<T>(lifecyclePublisher.getBehavior());
+        return new BindLifecycleObservableTransformer<T>(lifecyclePublisher.getBehavior(), disposeEvent);
     }
 
     public CompletableTransformer withCompletable() {
-        return new BindLifecycleCompletableTransformer(lifecyclePublisher.getBehavior());
+        return new BindLifecycleCompletableTransformer(lifecyclePublisher.getBehavior(), disposeEvent);
     }
 
     public <T> SingleTransformer<T, T> withSingle() {
-        return new BindLifecycleSingleTransformer<T>(lifecyclePublisher.getBehavior());
+        return new BindLifecycleSingleTransformer<T>(lifecyclePublisher.getBehavior(), disposeEvent);
     }
 
     public <T> MaybeTransformer<T, T> withMaybe() {
-        return new BindLifecycleMaybeTransformer<T>(lifecyclePublisher.getBehavior());
+        return new BindLifecycleMaybeTransformer<T>(lifecyclePublisher.getBehavior(), disposeEvent);
     }
 }

@@ -17,6 +17,7 @@ package cn.nekocode.rxlifecycle.sample;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -36,6 +37,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +88,21 @@ public class MainActivity extends AppCompatActivity {
                 testMaybe();
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Observable.interval(0, 2, TimeUnit.SECONDS)
+                .compose(RxLifecycle.bindUntil(this, LifecyclePublisher.ON_STOP).<Long>withObservable())
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Long>() {
+                    @Override
+                    public void accept(Long n) throws Exception {
+                        Log.v(TAG, "bindUntil stop accept: " + n.toString());
+                    }
+                });
     }
 
     private void tellLifecycleState() {

@@ -23,16 +23,16 @@ import io.reactivex.processors.BehaviorProcessor;
  * @author nekocode (nekocode.cn@gmail.com)
  */
 public class LifecyclePublisher {
-    public static final int ON_ATTACH = 0;
-    public static final int ON_CREATE = ON_ATTACH + 1;
-    public static final int ON_CREATE_VIEW = ON_CREATE + 1;
-    public static final int ON_START = ON_CREATE_VIEW + 1;
-    public static final int ON_RESUME = ON_START + 1;
-    public static final int ON_PAUSE = ON_RESUME + 1;
-    public static final int ON_STOP = ON_PAUSE + 1;
-    public static final int ON_DESTROY_VIEW = ON_STOP + 1;
-    public static final int ON_DESTROY = ON_DESTROY_VIEW + 1;
-    public static final int ON_DETACH = ON_DESTROY + 1;
+    public static final int ON_ATTACH = 1;
+    public static final int ON_CREATE = 1 << 1;
+    public static final int ON_CREATE_VIEW = 1 << 2;
+    public static final int ON_START = 1 << 3;
+    public static final int ON_RESUME = 1 << 4;
+    public static final int ON_PAUSE = 1 << 5;
+    public static final int ON_STOP = 1 << 6;
+    public static final int ON_DESTROY_VIEW = 1 << 7;
+    public static final int ON_DESTROY = 1 << 8;
+    public static final int ON_DETACH = 1 << 9;
 
     @IntDef({ON_ATTACH, ON_CREATE, ON_CREATE_VIEW,
             ON_START, ON_RESUME,
