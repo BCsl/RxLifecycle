@@ -17,8 +17,8 @@ allprojects {
 }
 
 subprojects {
-    group = 'com.github.nekocode'
-    version = '1.1'
+    group = 'com.github.hellocsl'
+    version = '1.2'
 }
 
 task clean(type: Delete) {

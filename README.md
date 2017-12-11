@@ -11,10 +11,15 @@ Use the `Transformer`s provided. `bind(your activity or fragment).with(observabl
 
 ```
 RxLifecycle.bind(activity).withFlowable()
+RxLifecycle.bindUntil(activity, ON_XXX /** Prescribed lifecycle defined in LifecyclePublisher **/).withFlowable()
 RxLifecycle.bind(activity).withObservable()
+RxLifecycle.bindUntil(activity, ON_XXX /** Prescribed event defined in LifecyclePublisher **/).withObservable()
 RxLifecycle.bind(activity).withCompletable()
+RxLifecycle.bindUntil(activity, ON_XXX /** Prescribed event defined in LifecyclePublisher **/).withCompletable()
 RxLifecycle.bind(activity).withSingle()
+RxLifecycle.bindUntil(activity, ON_XXX /** Prescribed event defined in LifecyclePublisher **/).withSingle()
 RxLifecycle.bind(activity).withMaybe()
+RxLifecycle.bindUntil(activity, ON_XXX /** Prescribed event defined in LifecyclePublisher **/).withMaybe()
 ```
 
 And then compose it to your original observable.
