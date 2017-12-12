@@ -25,7 +25,7 @@ RxLifecycle.bindUntil(activity, ON_XXX /** Prescribed event defined in Lifecycle
 RxLifecycle.bindUntil(activity, ON_XXX /** Prescribed event defined in LifecyclePublisher **/).withMaybe()
 ```
 
-And then compose it to your original observable.
+And then compose it to your original observable，it will automatically complete the observable when event `LifecyclePublisher.ON_DESTROY_VIEW | LifecyclePublisher.ON_DESTROY | LifecyclePublisher.ON_DETACH` is emited by [LifecyclePublisher](https://github.com/BCsl/RxLifecycle/blob/master/rxlifecycle/src/main/java/cn/nekocode/rxlifecycle/LifecyclePublisher.java)
 
 ```java
 Observable.interval(0, 2, TimeUnit.SECONDS)
@@ -36,6 +36,21 @@ Observable.interval(0, 2, TimeUnit.SECONDS)
             @Override
             public void accept(Long n) throws Exception {
                 toast("Observable -> " + n.toString());
+            }
+        });
+```
+
+Or you can bind to prescribed event lifecyle defined in LifecyclePublisher
+
+```java
+Observable.interval(0, 2, TimeUnit.SECONDS)
+        .compose(RxLifecycle.bindUntil(this, LifecyclePublisher.ON_STOP).<Long>withObservable())
+        .subscribeOn(Schedulers.computation())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Consumer<Long>() {
+            @Override
+            public void accept(Long n) throws Exception {
+                Log.v(TAG, "bindUntil stop accept: " + n.toString());
             }
         });
 ```
