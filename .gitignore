@@ -9,3 +9,6 @@
 *.iml
 *.apk
 *.jobf
+
+# updload artifact
+jcenter.sh

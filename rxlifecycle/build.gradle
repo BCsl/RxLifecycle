@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion COMPILE_SDK_VERSION.toInteger()
@@ -27,4 +27,14 @@ task sourcesJar(type: Jar) {
 
 artifacts {
     archives sourcesJar
+}
+
+
+publish {
+    userOrg = 'bcsl'
+    groupId = 'github.hellocsl'
+    artifactId = 'rxlifecycle'
+    publishVersion = '1.2'
+    desc = 'This library is a non-invasive version of RxLifecycle. It can help you to automatically complete the observable sequences based on Activity or Fragment\'s lifecycle'
+    website = 'https://github.com/BCsl/RxLifecycle'
 }
