@@ -28,25 +28,26 @@ import io.reactivex.processors.BehaviorProcessor;
  * @author nekocode (nekocode.cn@gmail.com)
  */
 public class BindLifecycleMaybeTransformer<T> implements MaybeTransformer<T, T> {
-    private final BehaviorProcessor<Integer> lifecycleBehavior;
-    private int disposeEvent;
+    private final BehaviorProcessor<Integer> mLifecycleBehavior;
+    private @LifecyclePublisher.Events
+    int mDisposeEvent;
 
     private BindLifecycleMaybeTransformer() throws IllegalAccessException {
         throw new IllegalAccessException();
     }
 
-    public BindLifecycleMaybeTransformer(@NonNull BehaviorProcessor<Integer> lifecycleBehavior, int disposeLifecycle) {
-        this.lifecycleBehavior = lifecycleBehavior;
-        this.disposeEvent = disposeLifecycle;
+    public BindLifecycleMaybeTransformer(@NonNull BehaviorProcessor<Integer> lifecycleBehavior, @LifecyclePublisher.Events int disposeLifecycle) {
+        this.mLifecycleBehavior = lifecycleBehavior;
+        this.mDisposeEvent = disposeLifecycle;
     }
 
     @Override
     public MaybeSource<T> apply(Maybe<T> upstream) {
         return upstream.takeUntil(
-                lifecycleBehavior.skipWhile(new Predicate<Integer>() {
+                mLifecycleBehavior.skipWhile(new Predicate<Integer>() {
                     @Override
-                    public boolean test(@LifecyclePublisher.Event Integer event) throws Exception {
-                        return (event & disposeEvent) == 0;
+                    public boolean test(@LifecyclePublisher.Events Integer event) throws Exception {
+                        return (event & mDisposeEvent) == 0;
                     }
                 })
         );

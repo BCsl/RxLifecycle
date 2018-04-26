@@ -16,6 +16,7 @@
 package cn.nekocode.rxlifecycle.transformer;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import cn.nekocode.rxlifecycle.LifecyclePublisher;
 import io.reactivex.Observable;
@@ -28,25 +29,27 @@ import io.reactivex.processors.BehaviorProcessor;
  * @author nekocode (nekocode.cn@gmail.com)
  */
 public class BindLifecycleObservableTransformer<T> implements ObservableTransformer<T, T> {
-    private final BehaviorProcessor<Integer> lifecycleBehavior;
-    private int disposeEvent;
+    private final BehaviorProcessor<Integer> mLifecycleBehavior;
+    private @LifecyclePublisher.Events
+    int mDisposeEvent;
 
     private BindLifecycleObservableTransformer() throws IllegalAccessException {
         throw new IllegalAccessException();
     }
 
-    public BindLifecycleObservableTransformer(@NonNull BehaviorProcessor<Integer> lifecycleBehavior, int disposeLifecycle) {
-        this.lifecycleBehavior = lifecycleBehavior;
-        this.disposeEvent = disposeLifecycle;
+    public BindLifecycleObservableTransformer(@NonNull BehaviorProcessor<Integer> lifecycleBehavior, @LifecyclePublisher.Events int disposeLifecycle) {
+        this.mLifecycleBehavior = lifecycleBehavior;
+        this.mDisposeEvent = disposeLifecycle;
     }
 
     @Override
     public ObservableSource<T> apply(Observable<T> upstream) {
         return upstream.takeUntil(
-                lifecycleBehavior.skipWhile(new Predicate<Integer>() {
+                mLifecycleBehavior.skipWhile(new Predicate<Integer>() {
                     @Override
-                    public boolean test(@LifecyclePublisher.Event Integer event) throws Exception {
-                        return (event & disposeEvent) == 0;
+                    public boolean test(@LifecyclePublisher.Events Integer event) throws Exception {
+                        Log.v(BindLifecycleObservableTransformer.this.toString(), String.format("test:%d", event));
+                        return (event & mDisposeEvent) == 0;//条件为 false 的时候才发射
                     }
                 }).toObservable()
         );

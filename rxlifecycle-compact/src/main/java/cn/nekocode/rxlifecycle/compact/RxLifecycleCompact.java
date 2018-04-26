@@ -22,6 +22,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import cn.nekocode.rxlifecycle.LifecyclePublisher;
+import cn.nekocode.rxlifecycle.RxLifecycle;
 import cn.nekocode.rxlifecycle.transformer.BindLifecycleCompletableTransformer;
 import cn.nekocode.rxlifecycle.transformer.BindLifecycleFlowableTransformer;
 import cn.nekocode.rxlifecycle.transformer.BindLifecycleMaybeTransformer;
@@ -41,34 +42,35 @@ import io.reactivex.SingleTransformer;
 public class RxLifecycleCompact {
     private static final String FRAGMENT_TAG = "_BINDING_V4_FRAGMENT_";
     private final LifecyclePublisher lifecyclePublisher;
-    private int disposeEvent = LifecyclePublisher.ON_DESTROY_VIEW | LifecyclePublisher.ON_DESTROY | LifecyclePublisher.ON_DETACH;
+    private @LifecyclePublisher.Events
+    int disposeEvent = LifecyclePublisher.ON_DESTROY_VIEW | LifecyclePublisher.ON_DESTROY | LifecyclePublisher.ON_DETACH;
 
 
     public static RxLifecycleCompact bind(@NonNull AppCompatActivity targetActivity) {
-        return bindUntil(targetActivity, -1);
+        return bindUntil(targetActivity, RxLifecycle.DEFAULT);
     }
 
-    public static RxLifecycleCompact bindUntil(@NonNull AppCompatActivity targetActivity, int disposeLifecycle) {
+    public static RxLifecycleCompact bindUntil(@NonNull AppCompatActivity targetActivity, @LifecyclePublisher.Events int disposeLifecycle) {
         return bind(targetActivity.getSupportFragmentManager(), disposeLifecycle);
     }
 
     public static RxLifecycleCompact bind(@NonNull Fragment targetFragment) {
-        return bindUntil(targetFragment, -1);
+        return bindUntil(targetFragment, RxLifecycle.DEFAULT);
     }
 
-    public static RxLifecycleCompact bindUntil(@NonNull Fragment targetFragment, int disposeLifecycle) {
+    public static RxLifecycleCompact bindUntil(@NonNull Fragment targetFragment, @LifecyclePublisher.Events int disposeLifecycle) {
         return bind(targetFragment.getChildFragmentManager(), disposeLifecycle);
     }
 
     public static RxLifecycleCompact bind(@NonNull FragmentManager fragmentManager) {
-        return bindUntil(fragmentManager, -1);
+        return bindUntil(fragmentManager, RxLifecycle.DEFAULT);
     }
 
-    public static RxLifecycleCompact bindUntil(@NonNull FragmentManager fragmentManager, int disposeLifecycle) {
+    public static RxLifecycleCompact bindUntil(@NonNull FragmentManager fragmentManager, @LifecyclePublisher.Events int disposeLifecycle) {
         return bind(fragmentManager, disposeLifecycle);
     }
 
-    private static RxLifecycleCompact bind(@NonNull FragmentManager fragmentManager, int disposeLifecycle) {
+    private static RxLifecycleCompact bind(@NonNull FragmentManager fragmentManager, @LifecyclePublisher.Events int disposeLifecycle) {
         BindingV4Fragment fragment = (BindingV4Fragment) fragmentManager.findFragmentByTag(FRAGMENT_TAG);
         if (fragment == null) {
             fragment = new BindingV4Fragment();
@@ -83,7 +85,7 @@ public class RxLifecycleCompact {
         return bind(fragment.getLifecyclePublisher(), disposeLifecycle);
     }
 
-    public static RxLifecycleCompact bind(@NonNull LifecyclePublisher lifecyclePublisher, int disposeEvent) {
+    public static RxLifecycleCompact bind(@NonNull LifecyclePublisher lifecyclePublisher, @LifecyclePublisher.Events int disposeEvent) {
         return new RxLifecycleCompact(lifecyclePublisher, disposeEvent);
     }
 
@@ -91,7 +93,7 @@ public class RxLifecycleCompact {
         throw new IllegalAccessException();
     }
 
-    private RxLifecycleCompact(@NonNull LifecyclePublisher lifecyclePublisher, int disposeLifecycle) {
+    private RxLifecycleCompact(@NonNull LifecyclePublisher lifecyclePublisher, @LifecyclePublisher.Events int disposeLifecycle) {
         this.lifecyclePublisher = lifecyclePublisher;
         if (disposeLifecycle > 0) {
             this.disposeEvent = disposeLifecycle;

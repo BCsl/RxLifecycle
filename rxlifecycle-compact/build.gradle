@@ -7,19 +7,19 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 26
+        targetSdkVersion COMPILE_SDK_VERSION.toInteger()
         versionCode 1
         versionName version
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    provided project(':rxlifecycle')
-    provided "com.android.support:appcompat-v7:$SUPPORT_LIBS_VERSION"
-    provided "com.android.support:support-v4:$SUPPORT_LIBS_VERSION"
-    provided "com.android.support:support-annotations:$SUPPORT_LIBS_VERSION"
-    provided "io.reactivex.rxjava2:rxjava:$RXJAVA2_VERSION"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    compileOnly project(':rxlifecycle')
+    compileOnly "com.android.support:appcompat-v7:$SUPPORT_LIBS_VERSION"
+    compileOnly "com.android.support:support-v4:$SUPPORT_LIBS_VERSION"
+    compileOnly "com.android.support:support-annotations:$SUPPORT_LIBS_VERSION"
+    compileOnly "io.reactivex.rxjava2:rxjava:$RXJAVA2_VERSION"
 }
 
 // build a jar with source files

@@ -31,79 +31,79 @@ import android.view.ViewGroup;
  */
 @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
 public class BindingFragment extends Fragment {
-    private final LifecyclePublisher lifecyclePublisher = new LifecyclePublisher();
+    private final LifecyclePublisher mLifecyclePublisher = new LifecyclePublisher();
 
     public BindingFragment() {
     }
 
     public LifecyclePublisher getLifecyclePublisher() {
-        return lifecyclePublisher;
+        return mLifecyclePublisher;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        lifecyclePublisher.onAttach();
+        mLifecyclePublisher.onAttach();
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        lifecyclePublisher.onAttach();
+        mLifecyclePublisher.onAttach();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        lifecyclePublisher.onCreate();
+        mLifecyclePublisher.onCreate();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        lifecyclePublisher.onCreateView();
+        mLifecyclePublisher.onCreateView();
         return null;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        lifecyclePublisher.onStart();
+        mLifecyclePublisher.onStart();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        lifecyclePublisher.onResume();
+        mLifecyclePublisher.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        lifecyclePublisher.onPause();
+        mLifecyclePublisher.onPause();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        lifecyclePublisher.onStop();
+        mLifecyclePublisher.onStop();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        lifecyclePublisher.onDestroyView();
+        mLifecyclePublisher.onDestroyView();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        lifecyclePublisher.onDestroy();
+        mLifecyclePublisher.onDestroy();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        lifecyclePublisher.onDetach();
+        mLifecyclePublisher.onDetach();
     }
 }

@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 .asFlowable()
                 .subscribe(new Consumer<Integer>() {
                     @Override
-                    public void accept(@LifecyclePublisher.Event Integer event) throws Exception {
+                    public void accept(@LifecyclePublisher.Events Integer event) throws Exception {
                         switch (event) {
                             case LifecyclePublisher.ON_START:
                                 toast("Your activity is started.");
